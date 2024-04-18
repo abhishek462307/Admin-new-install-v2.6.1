@@ -899,6 +899,43 @@ class OrderController extends Controller
             } catch (\Exception $ex) {
                 info($ex->getMessage());
             }
+			
+			$whatsapp = DB::table('whatsapp_setting')->first();
+            $url = $whatsapp->url ?? '';
+            $instance_id = $whatsapp->instance_id ?? '';
+            $access_token = $whatsapp->access_token ?? '';
+            $message_type = $whatsapp->message_type ?? '';
+            $message_new_order = $whatsapp->message_new_order ?? '';
+            
+            $message = $message_new_order . "\n";
+            $message .= 'Order Id: ' . $order->id . "\n";
+            $message1 = urlencode($message);
+            //-------------------------admin--------------------------------------------------------------//
+            $admin = DB::table('business_settings')->where('key', 'phone')->first();
+            $admin_number = $admin->value ?? '';
+            $userphone=$admin_number;
+            $user1 = str_replace('+','',$userphone);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url."?number=$user1&type=$message_type&message=$message1&instance_id=$instance_id&access_token=$access_token");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_exec($ch);
+            curl_close($ch);
+            //-------------------------admin end--------------------------------------------------------------//
+            $store = DB::table('stores')->where('id', $request->store_id)->first();
+            $store_number = $store->phone ?? '';
+            $userphone='91'.$store_number;
+            $user1 = str_replace('+','',$userphone);
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url."?number=$user1&type=$message_type&message=$message1&instance_id=$instance_id&access_token=$access_token");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_exec($ch);
+            curl_close($ch);
+            //-------------------------store end--------------------------------------------------------------//
+			
+			
+			
+			
+			
             //PlaceOrderMail end
             return response()->json([
                 'message' => translate('messages.order_placed_successfully'),

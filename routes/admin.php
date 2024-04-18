@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\WhatsappController;
 
 
 Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
@@ -728,3 +729,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         });
     });
 });
+
+Route::get('/business-settings/whatsapp-index', [WhatsappController::class, 'whatsapp'])->name('business-settings.whatsapp-index');
+Route::get('/admin-views/business-settings/whatsapp-index', [WhatsappController::class, 'whatsappIndex'])->name('admin-views.business-settings.whatsapp-index');
+Route::post('/admin-views/business-settings/whatsapp-index', [WhatsappController::class, 'whatsappStore'])->name('admin-views.business-settings.whatsappStore');
